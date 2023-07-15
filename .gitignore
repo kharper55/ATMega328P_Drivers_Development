@@ -3,6 +3,7 @@
 .o
 .map
 .elf
+makefile
 Debug
 .project
 .cproject

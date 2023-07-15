@@ -19,7 +19,7 @@ static inline void hw_bit_write(uint8_t reg_addr, uint8_t bit_num, bit_t val) {
 }
 
 static inline bit_t hw_bit_read(uint8_t reg_addr, uint8_t bit_num) {
-	return (REG_ADDR & (1 << bit_num))? HIGH: LOW;
+	return (REG_ADDR & (1 << bit_num))? 1: 0;
 }
 
 static inline void hw_reg8_write(uint8_t reg_addr, uint8_t val) {
