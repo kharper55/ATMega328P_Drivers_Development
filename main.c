@@ -10,7 +10,7 @@
 #include <GPIO/gpio.c>
 #include <util/delay.h>
 
-// Need for BR calculation with usart.h
+// Need for BR calculation inside uart.h
 #define F_CPU 16000000UL
 #define UART_BAUD 115200UL
 
