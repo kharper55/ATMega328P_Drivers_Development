@@ -17,7 +17,6 @@
 // why the hell does this work?
 #define round(x) (x - (unsigned long)(x)>=0?(unsigned long)((x)+1):(unsigned long)((x)-1))
 #define UBRR_VALUE_ROUNDED_NEAREST round(UBRR_VALUE)
-//#define UBRR_VALUE_ROUNDED_NEAREST 8.1
 #define UBRRH_VALUE ((unsigned long)UBRR_VALUE_ROUNDED_NEAREST >> 8)
 #define UBRRL_VALUE ((unsigned long)UBRR_VALUE_ROUNDED_NEAREST)
 
