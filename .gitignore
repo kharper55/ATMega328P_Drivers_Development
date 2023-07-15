@@ -1,5 +1,8 @@
 .vscode
 .settings
+.o
+.map
+.elf
 Debug
 .project
 .cproject
