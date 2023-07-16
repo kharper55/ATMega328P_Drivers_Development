@@ -10,7 +10,6 @@
 #include "utility.h"  // For utility functions
 #include "hw_types.h" // Needed for writing to registers
 #include <GPIO/gpio.c>
-#include <util/delay.h>
 
 // Need for BR calculation inside uart.h
 #define UART_BAUD 115200UL
@@ -33,12 +32,33 @@ int main(void) {
 
 	UART_Init(TX, false, NONE);
 	gpio_port_init(BASE_B, DIR_OUTPUT);
-	TWI_Master_Init(MASTER_TX, true);
-	
-	TWI_Read_Slave_Address((uint8_t)(0x3C << 1) | (0x00));
 
-	UART_Transmit_Byte(0x30);
-	TWI_Write_Data(0xFF);
+	I2C_Master_Init(true);
+	UART_Transmit_String((unsigned char*)"I2C bit rate and SCL initialized");
+	UART_Transmit_NL(1, false);
+
+	I2C_Start();
+	UART_Transmit_String((unsigned char*)"I2C START condition sent");
+	UART_Transmit_NL(1, false);
+	//while(TWI_Get_Status != 0x08);
+	
+	I2C_Write(0x68 << 1);
+	UART_Transmit_String((unsigned char*)"TWI SLA address packet sent");
+	UART_Transmit_NL(1, false);
+	while(TWI_Get_Status != 0x18);
+	UART_Transmit_String((unsigned char*)"SLA+W has been transmitted, ACK received");
+	UART_Transmit_NL(1, false);
+	
+
+	//TWI_Write_Data(0xFF);
+	I2C_Write(0x00);
+	UART_Transmit_String((unsigned char*)"TWI data packet sent");
+	UART_Transmit_NL(1, false);
+	//while(TWI_Get_Status() != 0x28);
+	UART_Transmit_String((unsigned char*)"Data byte has been transmitted, ACK received");
+	UART_Transmit_NL(1, false);
+
+	I2C_Stop();
 
 	UART_Transmit_String((unsigned char*)"Welcome to ATMega328P Driver Dev. by Kevin Harper");
 	UART_Transmit_NL(2, false);

@@ -24,15 +24,13 @@ typedef enum twi_modes {
 } twi_mode_t;
 
 //Controls clock frequency for I2C in master mode
-#define SCL_PSC 1UL
-#define TWBR_VALUE_FLOAT ((F_CPU - 16UL)/(2UL*(F_SCL)*(SCL_PSC)))
-#define TWBR_VALUE  round_(TWBR_VALUE_FLOAT) //round macro is defined in utility.h
+#define TWBR_VALUE ((F_CPU/F_SCL - 16UL)/(2UL))
+//#define TWBR_VALUE  round_(TWBR_VALUE_FLOAT) //round macro is defined in utility.h
 
-twi_error_t TWI_Master_Init(twi_mode_t twi_mode, bool PUE);
-twi_error_t TWI_Start(twi_mode_t twi_mode);
-twi_error_t TWI_Read_Slave_Address(uint8_t data);
-twi_error_t TWI_Write_Data(uint8_t data);
-twi_error_t TWI_Stop();
-void TWI_Slave_Init();
+uint8_t TWI_Get_Status();
+void I2C_Master_Init(bool PUE);
+void I2C_Start();
+void I2C_Write(uint8_t data);
+void I2C_Stop();
 
 #endif //TWI_H_
