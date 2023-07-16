@@ -4,7 +4,7 @@
 * @date July 26, 2017                                                  *
 * Purpose: Provide an easy interface to deal with digital I/O devices  *
 *																	   *
-* Adapated by Kevin Harper for the ATMega328P 07/13/2023			   *
+* Adapted by Kevin Harper for the ATMega328P 07/13/2023			   *
 ***********************************************************************/
 
 #ifndef HW_TYPES_H_

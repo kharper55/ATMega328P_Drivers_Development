@@ -1,6 +1,6 @@
 /***********************************************************************
-* Application for AVR Rough API                                        *
-* @author Ahmed Elzoughby                                              *
+* Application for AVR UART, TWI, GPIO peripherals, etc.                *
+* @author Kevin Harper                                                 *
 * @date July 12, 2023                                                  *
 * Purpose: Show how to use the GPIO driver in the applications         *
 *          Debugged with UART thru the onboard CH340 IC for the nano   *
@@ -13,7 +13,6 @@
 #include <util/delay.h>
 
 // Need for BR calculation inside uart.h
-#define F_CPU 16000000UL
 #define UART_BAUD 115200UL
 
 #include <UART/uart.c>
@@ -34,7 +33,12 @@ int main(void) {
 
 	UART_Init(TX, false, NONE);
 	gpio_port_init(BASE_B, DIR_OUTPUT);
-	TWI_Master_Init(true);
+	TWI_Master_Init(MASTER_TX, true);
+	
+	TWI_Read_Slave_Address((uint8_t)(0x3C << 1) | (0x00));
+
+	UART_Transmit_Byte(0x30);
+	TWI_Write_Data(0xFF);
 
 	UART_Transmit_String((unsigned char*)"Welcome to ATMega328P Driver Dev. by Kevin Harper");
 	UART_Transmit_NL(2, false);
