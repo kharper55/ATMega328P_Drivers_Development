@@ -11,7 +11,7 @@
 #define GPIO_H_
 
 #include "hw_gpio.h"
-#include "hw_types.h"
+//#include "hw_types.h"
 
 typedef enum gpio_error {
 	STATE_SUCCESS,

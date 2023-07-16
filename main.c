@@ -7,6 +7,8 @@
 *		   which is home to an ATMega328P                              *
 ***********************************************************************/
 
+#include "utility.h"  // For utility functions
+#include "hw_types.h" // Needed for writing to registers
 #include <GPIO/gpio.c>
 #include <util/delay.h>
 
@@ -16,17 +18,23 @@
 
 #include <UART/uart.c>
 
+#define F_SCL 400000UL
+
+#include <TWI/twi.c>
+
 uint8_t numBits = 6;
 uint8_t flagCount = 0;
 uint8_t i;					// bad name for a modular program
 uint8_t maxBitPos = 7;
 
 uint8_t buff[2];
+twi_error_t initSuccess;
 
 int main(void) {
 
 	UART_Init(TX, false, NONE);
 	gpio_port_init(BASE_B, DIR_OUTPUT);
+	TWI_Master_Init(true);
 
 	UART_Transmit_String((unsigned char*)"Welcome to ATMega328P Driver Dev. by Kevin Harper");
 	UART_Transmit_NL(2, false);

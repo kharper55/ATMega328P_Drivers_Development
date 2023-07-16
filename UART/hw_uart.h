@@ -14,13 +14,11 @@
 #define USCR0A 0xC0
 #define USCR0B 0xC1
 #define USCR0C 0xC2
-
 #define UBRR0L 0xC4
 #define UBRR0H 0xC5
-
 #define UDR0   0xC6
 
-// Pins
+// Pin definitions taken from avr gnu toolchain avr/include/avr/iom328p.h
 
 //USCR0A
 #define MPCM0 0

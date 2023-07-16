@@ -10,7 +10,7 @@
 #ifndef HW_TYPES_H_
 #define HW_TYPES_H_
 
-#include "gpio_types.h"
+#include <GPIO/gpio_types.h>
 
 #define REG_ADDR (*((volatile uint8_t*) reg_addr))
 

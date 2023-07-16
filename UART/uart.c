@@ -3,6 +3,10 @@
 * @author Kevin Harper                                                 *
 * @date July 13, 2023                                                  *
 * Purpose: Provide an easy interface to deal with serial terminal      *
+*                                                                      *
+* The Arduino Nano board feat. the ATMeg328P has a CH340 bidirectional *
+* Serial-USB chip providing an interface to the serial terminal on PC  *
+* through the board mounted micro-usb header for debugging.            *
 ***********************************************************************/
 
 #include "uart.h"
@@ -101,9 +105,7 @@ uint8_t UART_Read_Byte() {
     return 0;
 }
 // Does a function like this even make sense?
-void UART_Read_String() {
-    return 0;
-}
+void UART_Read_String() {}
 
 /************************ UART Transmit Stuff *************************/
 
