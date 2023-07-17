@@ -6,10 +6,10 @@
 *          I2C devices                                                 *
 ***********************************************************************/
 
-#ifndef HW_TWI_H_
-#define HW_TWI_H_
+#ifndef HW_I2C_H_
+#define HW_I2C_H_
 
-#include "twi_types.h"
+#include "i2c_types.h"
 
 #define TWBR  0xB8  // Two wire serial interface bit rate register
 #define TWSR  0xB9  // Two wire serial interface status register

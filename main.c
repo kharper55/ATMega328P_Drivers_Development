@@ -10,6 +10,8 @@
 #include "utility.h"  // For utility functions
 #include "hw_types.h" // Needed for writing to registers
 #include <GPIO/gpio.c>
+#include <string.h>
+#include <stdio.h>
 
 // Need for BR calculation inside uart.h
 #define UART_BAUD 115200UL
@@ -18,7 +20,10 @@
 
 #define F_SCL 400000UL
 
-#include <TWI/twi.c>
+#include <avr/interrupt.h>
+#include <I2C/i2c.c>
+
+#define RTC_ADDR 0x68 /*Address for DS3231 RTC clock*/
 
 uint8_t numBits = 6;
 uint8_t flagCount = 0;
@@ -26,46 +31,58 @@ uint8_t i;					// bad name for a modular program
 uint8_t maxBitPos = 7;
 
 uint8_t buff[2];
-twi_error_t initSuccess;
+
+uint8_t print_buffer[24];
 
 int main(void) {
 
 	UART_Init(TX, false, NONE);
 	gpio_port_init(BASE_B, DIR_OUTPUT);
 
-	I2C_Master_Init(true);
+	I2C_Init(false);
 	UART_Transmit_String((unsigned char*)"I2C bit rate and SCL initialized");
 	UART_Transmit_NL(1, false);
 
-	I2C_Start();
-	UART_Transmit_String((unsigned char*)"I2C START condition sent");
-	UART_Transmit_NL(1, false);
-	//while(TWI_Get_Status != 0x08);
-	
-	I2C_Write(0x68 << 1);
-	UART_Transmit_String((unsigned char*)"TWI SLA address packet sent");
-	UART_Transmit_NL(1, false);
-	while(TWI_Get_Status != 0x18);
-	UART_Transmit_String((unsigned char*)"SLA+W has been transmitted, ACK received");
-	UART_Transmit_NL(1, false);
-	
+	// BCD encoded, so hex values == decimal
+	uint8_t rtcData[7] = {0x50, 0x46, 0x20, 0x07, 0x16, 0x07, 0x23};
+	uint8_t rtcData2[7];
+	uint8_t error;
 
-	//TWI_Write_Data(0xFF);
-	I2C_Write(0x00);
-	UART_Transmit_String((unsigned char*)"TWI data packet sent");
-	UART_Transmit_NL(1, false);
-	//while(TWI_Get_Status() != 0x28);
-	UART_Transmit_String((unsigned char*)"Data byte has been transmitted, ACK received");
-	UART_Transmit_NL(1, false);
-
-	I2C_Stop();
+	sei(); /*Enable interrupts, necessary for I2C*/
 
 	UART_Transmit_String((unsigned char*)"Welcome to ATMega328P Driver Dev. by Kevin Harper");
 	UART_Transmit_NL(2, false);
 
+	error = I2C_Write(RTC_ADDR, 0x00, rtcData, sizeof(rtcData));
+	if (error != TWI_OK) {
+		memset(print_buffer,0,sizeof(print_buffer));
+		sprintf(print_buffer,"%d error %d\r\n\n", __LINE__, error);
+		UART_Transmit_String((unsigned char*)print_buffer);
+		while(1);
+	}
+
 	_delay_ms(1000);
 
 	while(1) {
+
+		error = I2C_Read(RTC_ADDR, 0x00, rtcData2, sizeof(rtcData));
+		if (error != TWI_OK) {
+			memset(print_buffer,0,sizeof(print_buffer));
+			sprintf(print_buffer,"%d error %d\r\n\n", __LINE__, error);
+			UART_Transmit_String((unsigned char*)print_buffer);
+			while(1);
+		}
+
+		memset(print_buffer,0,sizeof(print_buffer));
+		sprintf(print_buffer,"\r20%02x/%02x/%02x %02x:%02x:%02x",
+				rtcData2[6],
+				rtcData2[5],
+				rtcData2[4],
+				rtcData2[2],
+				rtcData2[1],
+				rtcData2[0]);
+		UART_Transmit_String((unsigned char*)print_buffer);
+
 
 		UART_Transmit_String((unsigned char*)"Flashing all bits on port B...");
 		UART_Transmit_NL(2, false);

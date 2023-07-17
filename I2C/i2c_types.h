@@ -6,7 +6,7 @@
 *          I2C devices                                                 *
 ***********************************************************************/
 
-#ifndef TWI_TYPES_H_
-#define TWI_TYPES_H_
+#ifndef I2C_TYPES_H_
+#define I2C_TYPES_H_
 
-#endif //TWI_TYPES_H_
+#endif //I2C_TYPES_H_
