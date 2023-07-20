@@ -205,6 +205,10 @@ uint8_t I2C_Read(uint8_t addr, uint8_t reg, uint8_t* data, uint16_t len) {
         I2C_Stop();
         return err;
     }
+
+    UART_Transmit_String((unsigned char*)"SLA+W acknowledged");
+	UART_Transmit_NL(1, false);
+
     hw_reg8_write(TWDR, reg); // Write address of register for slave that we wish
                               // to begin writing at
 
@@ -214,11 +218,17 @@ uint8_t I2C_Read(uint8_t addr, uint8_t reg, uint8_t* data, uint16_t len) {
         return err;
     }
     
+    UART_Transmit_String((unsigned char*)"DATA WRITE acknowledged");
+	UART_Transmit_NL(1, false);
+
     err = I2C_Restart();
     if (err != TWI_OK) {
         I2C_Stop();
         return err;
     }
+
+    UART_Transmit_String((unsigned char*)"Repeated start issued");
+	UART_Transmit_NL(1, false);
 
     hw_reg8_write(TWDR, ((addr << 1) | 1)); // SLA+R
     err = I2C_Addr_Read_ACK();
@@ -226,6 +236,9 @@ uint8_t I2C_Read(uint8_t addr, uint8_t reg, uint8_t* data, uint16_t len) {
         I2C_Stop();
         return err;
     }
+
+    UART_Transmit_String((unsigned char*)"SLA+R acknowledged");
+	UART_Transmit_NL(1, false);
 
     for (i = 0; i < (len - 1); i++) {
         err = I2C_Data_Read_ACK(1);
@@ -235,6 +248,9 @@ uint8_t I2C_Read(uint8_t addr, uint8_t reg, uint8_t* data, uint16_t len) {
         } 
         data[i] = hw_reg8_read(TWDR);
     }
+
+    UART_Transmit_String((unsigned char*)"DATA READ acknowledged");
+	UART_Transmit_NL(1, false);
 
     err = I2C_Data_Read_ACK(0);
     if (err != TWI_OK) {

@@ -21,7 +21,8 @@
 #define F_SCL 400000UL
 
 #include <avr/interrupt.h>
-#include <I2C/i2c.c>
+//#include <I2C/i2c.c>
+#include <twi/twi_hal.c>
 
 #define RTC_ADDR 0x68 /*Address for DS3231 RTC clock*/
 
@@ -39,48 +40,48 @@ int main(void) {
 	UART_Init(TX, false, NONE);
 	gpio_port_init(BASE_B, DIR_OUTPUT);
 
-	I2C_Init(false);
+	//I2C_Init(false);
+	twi_init(F_SCL, false);
 	UART_Transmit_String((unsigned char*)"I2C bit rate and SCL initialized");
 	UART_Transmit_NL(1, false);
 
 	// BCD encoded, so hex values == decimal
-	uint8_t rtcData[7] = {0x50, 0x46, 0x20, 0x07, 0x16, 0x07, 0x23};
-	uint8_t rtcData2[7];
-	uint8_t error;
+	uint8_t rtc_data[7] = {0x50, 0x46, 0x20, 0x07, 0x16, 0x07, 0x23};
 
 	sei(); /*Enable interrupts, necessary for I2C*/
 
 	UART_Transmit_String((unsigned char*)"Welcome to ATMega328P Driver Dev. by Kevin Harper");
 	UART_Transmit_NL(2, false);
 
-	error = I2C_Write(RTC_ADDR, 0x00, rtcData, sizeof(rtcData));
-	if (error != TWI_OK) {
+	uint8_t err = twi_write(RTC_ADDR,0x00,rtc_data,sizeof(rtc_data));
+	if(err != TWI_OK){
 		memset(print_buffer,0,sizeof(print_buffer));
-		sprintf(print_buffer,"%d error %d\r\n\n", __LINE__, error);
-		UART_Transmit_String((unsigned char*)print_buffer);
+		sprintf(print_buffer,"%d error %d\r\n\n",__LINE__,err);
+		UART_Transmit_String((uint8_t*)print_buffer);
 		while(1);
 	}
-
+    
 	_delay_ms(1000);
 
 	while(1) {
 
-		error = I2C_Read(RTC_ADDR, 0x00, rtcData2, sizeof(rtcData));
-		if (error != TWI_OK) {
+		err = twi_read(RTC_ADDR,0x00,rtc_data,sizeof(rtc_data));
+		if(err != TWI_OK){
 			memset(print_buffer,0,sizeof(print_buffer));
-			sprintf(print_buffer,"%d error %d\r\n\n", __LINE__, error);
-			UART_Transmit_String((unsigned char*)print_buffer);
+			sprintf(print_buffer,"%d error %d\r\n\n",__LINE__,err);
+			UART_Transmit_String((uint8_t*)print_buffer);
 			while(1);
 		}
 
 		memset(print_buffer,0,sizeof(print_buffer));
-		sprintf(print_buffer,"\r20%02x/%02x/%02x %02x:%02x:%02x",
-				rtcData2[6],
-				rtcData2[5],
-				rtcData2[4],
-				rtcData2[2],
-				rtcData2[1],
-				rtcData2[0]);
+			sprintf(print_buffer,"\r20%02x/%02x/%02x %02x:%02x:%02x",
+			rtc_data[6],
+			rtc_data[5],
+			rtc_data[4],
+			rtc_data[2],
+			rtc_data[1],
+			rtc_data[0]
+			);
 		UART_Transmit_String((unsigned char*)print_buffer);
 
 
